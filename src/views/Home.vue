@@ -77,7 +77,174 @@
             </span>
           </div>
         </div>
-        <div class="serviceInput">
+        <div v-if="activeTab.includes('Авиабилеты')" class="serviceInput">
+          <div class="serviceInputRow">
+            <div class="input-group inputLogo">
+              <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="datePlane" type="text" placeholder="Дата вылета" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+            </div>
+            <button class="btn btn-primary colorBtn" @click="findTickets('airplanes')">
+              Найти билеты
+            </button>
+          </div>
+          <div class="serviceInputRow">
+            <span>
+              Например: 
+              <span class="examples">
+                Москва, Санкт-Петербург
+              </span>
+            </span>
+            <span>
+              Например: 
+              <span class="examples">
+                Санкт-Петербург, Москва
+              </span>
+            </span>
+            <div>
+              <input type="checkbox" />
+              <span class="examples">
+                +- 3 дня
+              </span>
+            </div>
+            <span class="examples">
+              8 ноября, 9 ноября
+            </span>
+          </div>
+          <hr />
+          <div class="serviceInputRow">
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="adultPlane++">+</span>
+              <input v-model="adultPlane" type="text" placeholder="1 взрослый" class="form-control planeInput" />  
+              <span class="input-group-text" id="basic-addon1" @click="adultPlane--">-</span>
+            </div>
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="childPlane++">+</span>
+              <input v-model="childPlane" type="text" placeholder="без детей до 12 лет" class="form-control planeInput" />
+              <span class="input-group-text" id="basic-addon1" @click="childPlane--">-</span>
+            </div>
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="kidPlane++">+</span>
+              <input v-model="kidPlane" type="text" placeholder="без малышей до 2 лет" class="form-control planeInput" />
+              <span class="input-group-text" id="basic-addon1" @click="kidPlane--">-</span>
+            </div>
+            <button class="btn btn-primary">
+              Эконом
+            </button>
+          </div>
+        </div>
+        <div v-else-if="activeTab.includes('Ж/д билеты')" class="serviceInput">
+          <div class="serviceInputRow">
+            <div class="input-group inputLogo">
+              <input v-model="fromRailway" type="text" placeholder="Откуда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="dateRailway" type="text" placeholder="Дата" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+            </div>
+            <span>
+              Указать дату обратно
+            </span>
+            <button class="btn btn-primary colorBtn" @click="findTickets('railways')">
+              Найти ж/д билеты
+            </button>
+          </div>
+          <div class="serviceInputRow">
+            <span class="examples">
+              Москва, Санкт-Петербург
+            </span>
+            <span class="examples">
+              Санкт-Петербург, Москва
+            </span>
+            <span class="examples">
+              8 ноября, 9 ноября
+            </span>
+          </div>
+        </div>
+        <div v-else-if="activeTab.includes('Автобусы')" class="serviceInput">
+          <div class="serviceInputRow">
+            <div class="input-group inputLogo">
+              <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="datePlane" type="text" placeholder="Дата вылета" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+            </div>
+            <div class="input-group inputLogo">
+              <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
+              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+            </div>
+            <button class="btn btn-primary colorBtn" @click="findTickets('airplanes')">
+              Найти билеты
+            </button>
+          </div>
+          <div class="serviceInputRow">
+            <span>
+              Например: 
+              <span class="examples">
+                Москва, Санкт-Петербург
+              </span>
+            </span>
+            <span>
+              Например: 
+              <span class="examples">
+                Санкт-Петербург, Москва
+              </span>
+            </span>
+            <div>
+              <input type="checkbox" />
+              <span class="examples">
+                +- 3 дня
+              </span>
+            </div>
+            <span class="examples">
+              8 ноября, 9 ноября
+            </span>
+          </div>
+          <hr />
+          <div class="serviceInputRow">
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="adultPlane++">+</span>
+              <input v-model="adultPlane" type="text" placeholder="1 взрослый" class="form-control planeInput" />  
+              <span class="input-group-text" id="basic-addon1" @click="adultPlane--">-</span>
+            </div>
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="childPlane++">+</span>
+              <input v-model="childPlane" type="text" placeholder="без детей до 12 лет" class="form-control planeInput" />
+              <span class="input-group-text" id="basic-addon1" @click="childPlane--">-</span>
+            </div>
+            <div class="input-group inputSpinner">
+              <span class="input-group-text" id="basic-addon1" @click="kidPlane++">+</span>
+              <input v-model="kidPlane" type="text" placeholder="без малышей до 2 лет" class="form-control planeInput" />
+              <span class="input-group-text" id="basic-addon1" @click="kidPlane--">-</span>
+            </div>
+            <button class="btn btn-primary">
+              Эконом
+            </button>
+          </div>
+        </div>
+        <div v-else-if="activeTab.includes('Электрички')" class="serviceInput">
           <div class="serviceInputRow">
             <div class="input-group inputLogo">
               <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" />
@@ -166,7 +333,9 @@ export default {
       adultPlane: '',
       childPlane: '',
       kidPlane: '',
-      
+      toRailway: '',
+      fromRailway: '',
+      dateRailway: '',
     }
   },
   methods: {

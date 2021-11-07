@@ -154,9 +154,11 @@
               <input v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">flight</span>
             </div>
-            <div class="input-group inputLogo">
+            <div class="input-group inputDatePicker">
+              <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
               <input v-model="dateRailway" type="text" placeholder="Дата" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+              <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
             </div>
             <span>
               Указать дату обратно
@@ -180,22 +182,22 @@
         <div v-else-if="activeTab.includes('Автобусы')" class="serviceInput">
           <div class="serviceInputRow">
             <div class="input-group inputLogo">
-              <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" />
+              <input v-model="fromBus" type="text" placeholder="Откуда" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">flight</span>
             </div>
             <div class="input-group inputLogo">
-              <input v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" />
+              <input v-model="toBus" type="text" placeholder="Куда" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">flight</span>
             </div>
             <div class="input-group inputLogo">
-              <input v-model="datePlane" type="text" placeholder="Дата вылета" class="form-control planeInput" />
+              <input v-model="dateBus" type="text" placeholder="Дата вылета" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
             </div>
             <div class="input-group inputLogo">
-              <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
+              <input v-model="countPassengersBus" type="text" placeholder="Обратно" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
             </div>
-            <button class="btn btn-primary colorBtn" @click="findTickets('airplanes')">
+            <button class="btn btn-primary colorBtn" @click="findTickets('busses')">
               Найти билеты
             </button>
           </div>
@@ -247,23 +249,21 @@
         <div v-else-if="activeTab.includes('Электрички')" class="serviceInput">
           <div class="serviceInputRow">
             <div class="input-group inputLogo">
-              <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" />
+              <input v-model="fromTrain" type="text" placeholder="Откуда" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">flight</span>
             </div>
             <div class="input-group inputLogo">
-              <input v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" />
+              <input v-model="toTrain" type="text" placeholder="Куда" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">flight</span>
             </div>
-            <div class="input-group inputLogo">
-              <input v-model="datePlane" type="text" placeholder="Дата вылета" class="form-control planeInput" />
+            <div class="input-group inputDatePicker">
+              <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+              <input v-model="dateTrain" type="text" placeholder="Дата" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+              <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
             </div>
-            <div class="input-group inputLogo">
-              <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
-              <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
-            </div>
-            <button class="btn btn-primary colorBtn" @click="findTickets('airplanes')">
-              Найти билеты
+            <button class="btn btn-primary colorBtn" @click="findTickets('trains')">
+              Показать расписание
             </button>
           </div>
           <div class="serviceInputRow">
@@ -336,6 +336,14 @@ export default {
       toRailway: '',
       fromRailway: '',
       dateRailway: '',
+      fromBus: '',
+      toBus: '',
+      dateBus: '',
+      countPassengersBus: '1 пасс.',
+      dialogCountPassengersBus: false,
+      dateFrom: '',
+      dateTo: '',
+      dateTrain: new Date().toLocaleDateString(),
     }
   },
   methods: {
@@ -443,6 +451,12 @@ export default {
     width: 250px;
   }
 
-  
+  .inputDatePicker {
+    width: 350px;
+  }
+
+  .inputDatePickerArrow {
+    color: rgb(0, 0, 255);
+  }
 
 </style>

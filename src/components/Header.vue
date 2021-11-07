@@ -1,10 +1,10 @@
 <template>
     <div class="header">
-        <div class="warning">
+        <div v-if="isWarning" class="warning">
             <span class="warningMessage">
                 Самое важное про открытие стран. А тут про поездки и вакцинацию.
             </span>
-            <span class="material-icons">
+            <span @click="isWarning = false" class="warningCloser material-icons">
                 close
             </span>
         </div>
@@ -12,7 +12,7 @@
             <div>
                 <img width="175px" src="https://cdn1.tu-tu.ru/images2/bemp/svg/logo/2018/logo_tutu_final.svg" alt="" />
                 <span class="tagline">
-                    Больше пользы для ваших путешествий
+                    {{ tagline }}
                 </span>
             </div>
             <div class="headerBannerRightBlock">
@@ -123,7 +123,15 @@
 
 <script>
 export default {
-    name: 'Header'
+    name: 'Header',
+    data(){
+        return {
+            isWarning: true
+        }
+    },
+    props: [
+        'tagline'
+    ]
 }
 </script>
 
@@ -187,6 +195,10 @@ export default {
         text-decoration: underline;
         text-underline-offset: 5px;
         font-size: 10px;
+    }
+
+    .warningCloser {
+        cursor: pointer;
     }
 
     

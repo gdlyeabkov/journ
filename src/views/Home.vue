@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header />
+    <Header :tagline="'Больше пользы для ваших путешествий'" />
     <div class="main">
       <div class="services">
         <div class="servicesLogos">
@@ -95,7 +95,7 @@
               <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
               <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
             </div>
-            <button class="btn btn-primary colorBtn" @click="findBillets()">
+            <button class="btn btn-primary colorBtn" @click="findTickets('airplanes')">
               Найти билеты
             </button>
           </div>
@@ -139,7 +139,7 @@
               <input v-model="kidPlane" type="text" placeholder="без малышей до 2 лет" class="form-control planeInput" />
               <span class="input-group-text" id="basic-addon1" @click="kidPlane--">-</span>
             </div>
-            <button class="btn btn-primary" @click="findBillets()">
+            <button class="btn btn-primary">
               Эконом
             </button>
           </div>
@@ -170,8 +170,8 @@ export default {
     }
   },
   methods: {
-    findBillets(){
-
+    findTickets(type){
+      this.$router.push({ name: 'Offers', query: { offerstype: type } })
     }
   },
   components: {
@@ -273,5 +273,7 @@ export default {
   .inputSpinner {
     width: 250px;
   }
+
+  
 
 </style>

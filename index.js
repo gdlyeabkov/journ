@@ -36,6 +36,27 @@ const TravelerSchema = new mongoose.Schema({
 }, { collection : 'mytravelers' });
 const TravelerModel = mongoose.model('TravelerModel', TravelerSchema);
 
+const AirplaneTicketSchema = new mongoose.Schema({
+    fromTime: String,
+    toTime: String,
+    price: Number,
+    from: String,
+    to: String,
+    date: String,
+    tickets: {
+        type: Number,
+        default: 5
+    },
+    isThings: Boolean,
+    isReturn: Boolean,
+    airport: String,
+    ratio: {
+        type: String,
+        default: '0.0'
+    }
+}, { collection : 'myairplanetickets' });
+const AirplaneTicketModel = mongoose.model('AirplaneTicketModel', AirplaneTicketSchema);
+
 const url = `mongodb+srv://glebClusterUser:glebClusterUserPassword@cluster0.fvfru.mongodb.net/travelers?retryWrites=true&w=majority`;
 mongoose.connect(url, connectionParams)
     .then( () => {
@@ -45,20 +66,71 @@ mongoose.connect(url, connectionParams)
         console.error(`Error connecting to the database. \n${err}`);
     })
 
-app.get("/client/info", (req, res) => {
+app.get("/api/offers/get", (req, res) => {
+    
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
 
-    let query = ClientModel.findOne({ _id: req.query.clientid })
-    query.exec((err, clientinfo) => {
+    if(req.query.offerstype.includes('airplanes')) {
+        let query = AirplaneTicketModel.find({  })
+        query.exec((err, airplanes) => {
+            if(err){
+                return res.json({ "status": "Error" })
+            }
+            return res.json({ "status": "OK", "offers": airplanes })
+        })
+    }
+
+})
+
+app.get('/api/tickets/airplanes/create', async (req, res) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    
+    const newAirplaneOffer = new AirplaneTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings })
+    newAirplaneOffer.save(function (err) {
         if(err){
             return res.json({ "status": "Error" })
+        } else {
+            return res.json({ status: "OK" })
         }
-        return res.json({ "status": "OK", "clientinfo": clientinfo })
     })
+})
 
+app.get('/api/tickets/pay', (req, res) => {
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    
+    if(req.query.offerstype.includes('airplanes')) {
+        let query = AirplaneTicketModel.findOne({ _id: req.query.offerid })
+        query.exec((err, airplane) => {
+            if(err){
+                return res.json({ "status": "Error" })
+            }
+            if(airplane.tickets >= 1) {
+                AirplaneTicketModel.updateOne({ _id: req.query.offerid }, 
+                    {
+                        "$inc": { "tickets": -1 }        
+                    }, (err, offer) => {
+                    if(err){
+                        return res.json({ "status": "Error" })        
+                    }
+                    return res.json({ "status": "OK" })
+                })
+            } else {
+                return res.json({ "status": "Error" })
+            }
+        })
+    
+    }
 })
 
 app.get("**", (req, res) => {

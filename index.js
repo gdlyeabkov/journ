@@ -80,7 +80,8 @@ const RailwayTicketSchema = new mongoose.Schema({
     ratio: {
         type: String,
         default: '0.0'
-    }
+    },
+    mark: String
 }, { collection : 'myrailwaytickets' });
 const RailwayTicketModel = mongoose.model('RailwayTicketModel', RailwayTicketSchema);
 
@@ -167,7 +168,7 @@ app.get("/api/offers/get", (req, res) => {
 
 })
 
-app.get('/api/tickets/airplanes/create', async (req, res) => {
+app.get('/api/tickets/airplanes/create', (req, res) => {
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -176,6 +177,57 @@ app.get('/api/tickets/airplanes/create', async (req, res) => {
     
     const newAirplaneOffer = new AirplaneTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings })
     newAirplaneOffer.save(function (err) {
+        if(err){
+            return res.json({ "status": "Error" })
+        } else {
+            return res.json({ status: "OK" })
+        }
+    })
+})
+
+app.get('/api/tickets/railways/create', async (req, res) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    
+    const newRailwayOffer = new RailwayTicketModel({ fromTime: req.query.newrailwayofferfromtime, toTime: req.query.newrailwayoffertotime, prices: req.query.newrailwayofferprices, from: req.query.newrailwayofferfrom, to: req.query.newrailwayofferto, date: req.query.newrailwayofferdate, author: req.query.newrailwayofferauthor, compartmentTickets: req.query.newrailwayoffercompartmenttickets, reservedSeatTickets: req.query.newrailwayofferreservedseattickets, mark: req.query.newrailwayoffermark })
+    newRailwayOffer.save(function (err) {
+        if(err){
+            return res.json({ "status": "Error" })
+        } else {
+            return res.json({ status: "OK" })
+        }
+    })
+})
+
+app.get('/api/tickets/busses/create', async (req, res) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    
+    const newBussOffer = new BussTicketModel({ fromTime: req.query.newbussofferfromtime, toTime: req.query.newbussoffertotime, price: Number(req.query.newbussofferprice), from: req.query.newbussofferfrom, to: req.query.newbussofferto, date: req.query.newbussofferdate, driver: req.query.newbussofferdriver, days: req.query.newbussofferdays })
+    newBussOffer.save(function (err) {
+        if(err){
+            return res.json({ "status": "Error" })
+        } else {
+            return res.json({ status: "OK" })
+        }
+    })
+})
+
+app.get('/api/tickets/trains/create', async (req, res) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    
+    const newTrainOffer = new TrainTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings })
+    newTrainOffer.save(function (err) {
         if(err){
             return res.json({ "status": "Error" })
         } else {
@@ -222,7 +274,7 @@ app.get("**", (req, res) => {
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
 
-    return res.json({ "status": "OK" })
+    return res.json({ "status": "Error" })
 })
     
 

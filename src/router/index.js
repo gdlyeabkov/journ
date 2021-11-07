@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Tours from '../views/Tours.vue'
 import Offers from '../views/Offers.vue'
+import TourRegister from '../views/TourRegister.vue'
 
 Vue.use(VueRouter)
 
@@ -22,7 +23,11 @@ const routes = [
     name: 'Offers',
     component: Offers
   },
-  
+  {
+    path: '/tours/register',
+    name: 'TourRegister',
+    component: TourRegister
+  },
   
 ]
 

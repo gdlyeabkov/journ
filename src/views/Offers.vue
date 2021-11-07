@@ -159,6 +159,169 @@
                             </div>
                         </div>
                     </div>
+                    <div v-else-if="offersType.includes('railways')">
+                        <div v-for="railwayOffer in offers" :key="railwayOffer._id" class="offer">
+                            <div class="offerAside">
+                                <div class="offerAsideColumn">
+                                    <div class="offerServiceFilters">
+                                        <span class="offerServiceFilterDriver">
+                                            {{ railwayOffer.mark }}
+                                            {{ railwayOffer.author }}
+                                        </span>
+                                    </div>
+                                    <div class="timeAndDestination">
+                                        <span>
+                                            <span class="time">
+                                                {{ railwayOffer.fromTime }}
+                                            </span>
+                                            <span class="date">
+                                                &nbsp;
+                                            </span>
+                                        </span>
+                                        <span>
+                                            {{ railwayOffer.from }}
+                                        </span>
+                                    </div>
+                                    <div class="offerAsideFooter">
+                                        <div class="ratio">
+                                            {{ railwayOffer.ratio }}
+                                        </div>
+                                        <span class="aboutRoute">
+                                            Дни следования
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="offerAsideColumn">
+                                    <div class="timeAndDestination">
+                                        <span>
+                                            &nbsp;
+                                        </span>
+                                        <span class="time">
+                                            {{ railwayOffer.toTime }}
+                                        </span>
+                                        <span>
+                                            {{ railwayOffer.to }}
+                                        </span>
+                                        <span>
+                                            ближайшие: 7, 8, 9 ноября
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="offerAsideColumn">
+                                    <div class="timeAndDestination">
+                                        <span>
+                                            &nbsp;
+                                        </span>
+                                        <span>
+                                            {{
+                                                hoursLabels[railwayOffer.toTime.split(':')[0]] - hoursLabels[railwayOffer.fromTime.split(':')[0]] - 1
+                                            }} ч 
+                                            {{
+                                                minutesLabels[railwayOffer.toTime.split(':')[1]] > minutesLabels[railwayOffer.toTime.split(':')[1]] ?
+                                                    minutesLabels[railwayOffer.toTime.split(':')[1]] - minutesLabels[railwayOffer.fromTime.split(':')[1]] - 1
+                                                :
+                                                    60 - minutesLabels[railwayOffer.fromTime.split(':')[1]] + minutesLabels[railwayOffer.toTime.split(':')[1]] 
+                                            }} м
+                                        </span>
+                                        <span class="route">
+                                            маршрут
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="offerArticle">
+                                <div class="railwayPayBlock" v-if="railwayOffer.prices.split('|')[0] >= 1">
+                                     <!-- && railwayOffer.seatTickets >= 1 -->
+                                    <div class="offerSettings">
+                                        <span>
+                                            Сид
+                                        </span>
+                                    </div>
+                                    <div class="offerPrice">
+                                        <span @click="payTicket(railwayOffer._id)" class="railwayPrice">
+                                            ~{{ railwayOffer.prices.split('|')[0] }}Ք
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="railwayPayBlock" v-if="railwayOffer.prices.split('|')[1] >= 1 && railwayOffer.reservedSeatTickets >= 1">
+                                    <div class="offerSettings">
+                                        <span>
+                                            Плацкарт
+                                        </span>
+                                    </div>
+                                    <div class="offerPrice">
+                                        <span @click="payTicket(railwayOffer._id)" class="railwayPrice">
+                                            ~{{ railwayOffer.prices.split('|')[1] }}Ք
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="railwayPayBlock" v-if="railwayOffer.prices.split('|')[2] >= 1 && railwayOffer.compartmentTickets >= 1">
+                                    <div class="offerSettings">
+                                        <span>
+                                            Купе
+                                        </span>
+                                    </div>
+                                    <div class="offerPrice">
+                                        <span @click="payTicket(railwayOffer._id)" class="railwayPrice">
+                                            ~{{ railwayOffer.prices.split('|')[2] }}Ք
+                                        </span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-light showOtherTariffs">
+                                    Выбрать дату поездки
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else-if="offersType.includes('busses')">
+                        <div v-for="bussOffer in offers" :key="bussOffer._id" class="bussOffer">
+                            <div class="bussOfferAside">
+                                <span class="time">
+                                    {{ bussOffer.fromTime }}
+                                </span>
+                                <span class="time">
+                                    {{ bussOffer.toTime }}
+                                </span>
+                                <span>
+                                    {{
+                                        hoursLabels[bussOffer.toTime.split(':')[0]] - hoursLabels[bussOffer.fromTime.split(':')[0]] - 1
+                                    }} ч 
+                                    {{
+                                        minutesLabels[bussOffer.toTime.split(':')[1]] > minutesLabels[bussOffer.toTime.split(':')[1]] ?
+                                            minutesLabels[bussOffer.toTime.split(':')[1]] - minutesLabels[bussOffer.fromTime.split(':')[1]] - 1
+                                        :
+                                            60 - minutesLabels[bussOffer.fromTime.split(':')[1]] + minutesLabels[bussOffer.toTime.split(':')[1]] 
+                                    }} м
+                                </span>
+                                <div class="bussInfo">
+                                    <div class="ratio">
+                                        {{ bussOffer.ratio }}
+                                    </div>
+                                    <span class="offerServiceFilterDriver">
+                                        {{ bussOffer.driver }}
+                                    </span>
+                                </div>
+                                <span>
+                                    {{ bussOffer.days.split('|').join(', ') }}
+                                </span>
+                                <span class="bussPrice">
+                                    {{ bussOffer.price }}Ք
+                                </span>
+                            </div>
+                            <hr />
+                            <div class="bussArticle">
+                                {{ bussOffer.from }} – {{ bussOffer.to }}
+                            </div>
+                            <div class="bussArticle">
+                                <span class="railwayRoute">
+                                    Маршрут
+                                </span>
+                                <span>
+                                    Увидели ошибку
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div v-else class="notFoundOffers">
                     <span>
@@ -605,6 +768,86 @@ export default {
 
     .notCheck {
         color: rgb(175, 175, 175);  
+    }
+
+    .aboutRoute {
+        border-radius: 25px;
+        border: 1px solid rgb(0, 0, 255);
+        color: rgb(0, 0, 255);
+        width: 115px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    .route {
+        cursor: pointer;
+        color: rgb(0, 0, 255);
+    }
+
+    .offerServiceFilterDriver {
+        border-radius: 15px;
+        background-color: rgb(225, 225, 225);
+        width: 275px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0px 5px;
+    }
+
+    .railwayPayBlock {
+        border: 1px solid rgb(200, 200, 200);
+        height: 35px;
+        margin: 5px 0px;
+        display: flex;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding: 5px 15px;
+    }
+
+    .railwayPrice {
+        font-weight: bolder;
+    }
+
+    .bussOfferAside {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .bussOffer {
+        display: flex;
+        flex-direction: column;
+        border-radius: 15px;
+        background-color: rgb(255, 255, 255);
+        box-sizing: border-box;
+        padding: 10px 25px;
+        height: 185px;
+        margin: 15px 0px;
+    }
+
+    .bussPrice {
+        font-weight: bolder;
+        color: rgb(0, 100, 255);
+        font-size: 20px;
+    }
+
+    .bussInfo {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .bussInfo > * {
+        margin: 0px 5px;
+        
+    }
+
+    .bussArticle {
+        display: flex;
+        justify-content: space-between;
     }
 
 </style>

@@ -14,6 +14,9 @@
             <div v-if="offersType.includes('airplanes')">
                 <input type="text" v-model="newAirplaneOfferFrom" placeholder="Откуда" class="form-control w-25" />
                 <input type="text" v-model="newAirplaneOfferTo" placeholder="Куда" class="form-control w-25" />
+                <label for="" class="formLabel">
+                    Стоимость полёта
+                </label>
                 <input type="number" v-model="newAirplaneOfferPrice" class="form-control w-25" />
                 <input type="text" v-model="newAirplaneOfferDate" placeholder="Дата" class="form-control w-25" />
                 <input type="text" v-model="newAirplaneOfferFromTime" placeholder="Время отправления" class="form-control w-25" />
@@ -111,12 +114,12 @@
                 </button>
             </div>
             <div v-else-if="offersType.includes('trains')">
-                <input type="text" v-model="newAirplaneOfferFrom" placeholder="Откуда" class="form-control w-25" />
-                <input type="text" v-model="newAirplaneOfferTo" placeholder="Куда" class="form-control w-25" />
-                <input type="number" v-model="newAirplaneOfferPrice" class="form-control w-25" />
-                <input type="text" v-model="newAirplaneOfferDate" placeholder="Дата" class="form-control w-25" />
-                <input type="text" v-model="newAirplaneOfferFromTime" placeholder="Время отправления" class="form-control w-25" />
-                <input type="text" v-model="newAirplaneOfferToTime" placeholder="Время прибытия" class="form-control w-25" />
+                <input type="text" v-model="newTrainOfferFrom" placeholder="Откуда" class="form-control w-25" />
+                <input type="text" v-model="newTrainOfferTo" placeholder="Куда" class="form-control w-25" />
+                <input type="text" v-model="newTrainOfferDate" placeholder="Дата" class="form-control w-25" />
+                <input type="text" v-model="newTrainOfferFromTime" placeholder="Время отправления" class="form-control w-25" />
+                <input type="text" v-model="newTrainOfferToTime" placeholder="Время прибытия" class="form-control w-25" />
+                <input type="number" v-model="newTrainOfferPrice" class="form-control w-25" />
                 <button class="btn btn-primary" @click="createTour()">
                     Создать маршрут электрички
                 </button>
@@ -173,13 +176,19 @@ export default {
                 'вс',
             ],
             newBussOfferPrice: 0,
-            newBussOfferDriver: ''
+            newBussOfferDriver: '',
+            newTrainOfferDate: '',
+            newTrainOfferFromTime: '',
+            newTrainOfferToTime: '',
+            newTrainOfferFrom: '',
+            newTrainOfferTo: '',
+            newTrainOfferPrice: 0
         }
     },
     methods: {
         createTour() {
             if(this.offersType.includes('airplanes')) {
-                fetch(`http://localhost:4000/api/tickets/airplanes/create/?newbussofferfromtime=${this.newBussOfferFromTime}&newbussoffertotime=${this.newBussOfferToTime}&newbussofferprice=${this.newBussOfferPrice}&newbussofferfrom=${this.newBussOfferFrom}&newbussofferto=${this.newBussOfferFrom}&newbussofferdate=${this.newBussOfferDate}&newbussofferdriver=${this.newBussOfferDriver}&newbussofferdays=${this.bussOfferDays.join('|')}`, {
+                fetch(`http://localhost:4000/api/tickets/airplanes/create/?newairplaneofferfromtime=${this.newAirplaneOfferFromTime}&newairplaneoffertotime=${this.newAirplaneOfferToTime}&newairplaneofferprice=${this.newAirplaneOfferPrice}&newairplaneofferfrom=${this.newAirplaneOfferFrom}&newairplaneofferto=${this.newAirplaneOfferTo}&newairplaneofferdate=${this.newAirplaneOfferDate}&newairplaneofferairport=${this.newAirplaneOfferAirport}&newairplaneofferisreturn=${this.newAirplaneOfferIsReturn}&newairplaneofferisthings=${this.newAirplaneOfferIsThings}`, {
                     mode: 'cors',
                     method: 'GET'
                 }).then(response => response.body).then(rb  => {
@@ -304,6 +313,45 @@ export default {
                         this.newBussOfferPrice = 0
                     } else if(JSON.parse(result).status.includes('Error')) {
                         alert('ошибка при создании тура')
+                    }
+                });
+            } else if(this.offersType.includes('trains')) {
+                fetch(`http://localhost:4000/api/tickets/trains/create/?newtrainofferfromtime=${this.newTrainOfferFromTime}&newtrainoffertotime=${this.newTrainOfferToTime}&newtrainofferfrom=${this.newTrainOfferFrom}&newtrainofferto=${this.newTrainOfferTo}&newtrainofferdate=${this.newTrainOfferDate}&newtrainofferprice=${this.newTrainOfferPrice}`, {
+                    mode: 'cors',
+                    method: 'GET'
+                }).then(response => response.body).then(rb  => {
+                    const reader = rb.getReader()
+                    return new ReadableStream({
+                    start(controller) {
+                        function push() {
+                        reader.read().then( ({done, value}) => {
+                            if (done) {
+                            console.log('done', done);
+                            controller.close();
+                            return;
+                            }
+                            controller.enqueue(value);
+                            console.log(done, value);
+                            push();
+                        })
+                        }
+                        push();
+                    }
+                    });
+                }).then(stream => {
+                    return new Response(stream, { headers: { "Content-Type": "text/html" } }).text();
+                })
+                .then(result => {
+                    if(JSON.parse(result).status.includes('OK')) {
+                        alert('тур создан')
+                        this.newTrainOfferDate = ''
+                        this.newTrainOfferFromTime = ''
+                        this.neTrainOfferToTime = ''
+                        this.newTrainOfferFrom = ''
+                        this.newTrainOfferTo = ''
+                        this.newTrainOfferPrice = 0
+                    } else if(JSON.parse(result).status.includes('Error')) {
+                        alert('ошибка при создании пути электрички')
                     }
                 });
             }

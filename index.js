@@ -113,6 +113,7 @@ const TrainTicketSchema = new mongoose.Schema({
     from: String,
     to: String,
     date: String,
+    price: Number
 }, { collection : 'mytrainstickets' });
 const TrainTicketModel = mongoose.model('TrainTicketModel', TrainTicketSchema);
 
@@ -226,7 +227,7 @@ app.get('/api/tickets/trains/create', async (req, res) => {
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
     
-    const newTrainOffer = new TrainTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings })
+    const newTrainOffer = new TrainTicketModel({ fromTime: req.query.newtrainofferfromtime, toTime: req.query.newtrainoffertotime, from: req.query.newtrainofferfrom, to: req.query.newtrainofferto, date: req.query.newtrainofferdate, price: req.query.newtrainofferprice })
     newTrainOffer.save(function (err) {
         if(err){
             return res.json({ "status": "Error" })

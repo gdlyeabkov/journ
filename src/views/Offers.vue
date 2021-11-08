@@ -2,40 +2,212 @@
     <div>
         <Header :tagline="offersType.includes('airplanes') ? 'Авиабилеты' : offersType.includes('railways') ? 'Ж/д билеты' : offersType.includes('busses') ? 'Автобусы' : offersType.includes('trains') ? 'Электрички' : 'Больше пользы для ваших путешествий'" />
         <div class="main">
-             <div class="offerSearchAndService">
-                 <div class="searchBlock">
+            <div class="offerSearchAndService" v-if="offersType.includes('airplanes')">
+                 <div class="searchBlock searchBlockPlane" v-if="planeChangeSearch" @click="planeChangeSearch = false">
                     <span class="searchBlockFromAndTo">
-                        Москва — Сочи
+                        {{ fromPlane }} — {{ toPlane }}
                     </span>
                     <span class="searchBlockInfo">
-                        10 ноя, ср • 1 пассажир • эконом
+                        {{ `${datePlane.split('.')[0]} ${monthsLabels[datePlane.split('.')[1]]}` }}, {{ daysLabels[new Date(`${datePlane.split('.')[2]}`, `${datePlane.split('.')[1]}`, `${datePlane.split('.')[0]}`).getDay()] }} • 1 пассажир • эконом
                     </span>
-                    <button class="btn btn-light">
+                    <button class="btn btn-light planeChangeSearchBtn">
                         Изменить поиск
                     </button>
                  </div>
-                 <div class="offerService">
-
-                 </div>
-             </div>
-             <div class="offersBody">
-                <div v-if="offers.length >= 1">
-                    <div class="offersCount">
-                        <span>
-                            {{offers.length }} предложение, 
-                        </span>
-                        <span class="inexpensive">
-                            сначала недорогие
-                        </span>
+                <div v-else>
+                    <div class="planeServiceHeader">
+                        <h4>
+                            Поиск рейсов
+                        </h4>
                         <span class="material-icons">
-                            filter_list
+                            close
                         </span>
                     </div>
-                    <span class="">
-                        Отправление и прибытие по местному времени
+                    <div class="planeService">
+                        <div class="input-group inputRailwayDatePicker">
+                            <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control inputPlane" />
+                            <span class="input-group-text material-icons" id="basic-addon1">swap_horiz</span>
+                        </div>
+                        <input v-model="toPlane" type="text" placeholder="Куда" class="form-control inputPlane" />
+                        <div class="input-group inputRailwayDatePicker">
+                            <input v-model="datePlane" type="text" placeholder="Дата вылета" class="form-control planeInput" />
+                            <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+                        </div>
+                        <div class="input-group inputRailwayDatePicker">
+                            <input v-model="backPlane" type="text" placeholder="Обратно" class="form-control planeInput" />
+                            <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+                        </div>
+                        <button class="btn btn-primary planeBtn" @click="refreshRoutes()">
+                            Найти билеты
+                        </button>
+                    </div>
+                </div>
+                 <div class="offerService offerServiceContainer">
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Прямой
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 1 009Ք
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Короткая пересадка
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 5 310 Ք
+                         </span>
+                     </div>
+                     <div :class="{ offerServiceItem: true, offerServiceItemActive: thingsPlane }" @click="thingsPlane = !thingsPlane">
+                         <span class="offerServiceItemHeader">
+                            C багажом
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 2 590 Ք
+                         </span>
+                     </div>
+                     <div :class="{ offerServiceItem: true, offerServiceItemActive: returnPlane }" @click="returnPlane = !returnPlane">
+                         <span class="offerServiceItemHeader">
+                            С возвратом
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 2 590 Ք
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Аэрофлот
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 3 905 Ք
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            S7 Airlines
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            от 3 615 Ք
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Авиакомпания
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            Любая
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Аэропорт вылета
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            Любой
+                         </span>
+                     </div>
+                     <div class="offerServiceItem">
+                         <span class="offerServiceItemHeader">
+                            Время отправления
+                         </span>
+                         <span class="offerServiceItemFooter">
+                            Любое
+                         </span>
+                     </div>
+                 </div>
+            </div>
+            <div class="railwayService" v-else-if="offersType.includes('railways')">
+                <h4>
+                    Выберите день, чтобы найти ж/д билеты {{ fromRailway }} — {{ toRailway }}
+                </h4>
+                <div class="railwaySearch">
+                    <input v-model="fromRailway" type="text" placeholder="Откуда" class="form-control planeInput inputRailway" />
+                    <span class="material-icons railwaysSwapper" @click="swapRailwayFromAndTo()">
+                        swap_horiz
                     </span>
+                    <input v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput inputRailway" />
+                    <div class="input-group inputDatePicker inputRailwayDatePicker">
+                        <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+                        <input v-model="dateRailway" type="text" placeholder="Дата" class="form-control planeInput" />
+                        <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                    </div>
+                    <span class="backDate">
+                        Указать дату обратно
+                    </span>
+                    <button class="btn btn-primary" @click="refreshRoutes()">
+                        Найти ж/д билеты
+                    </button>
+                </div>
+                <div>
+                    <p>
+                        Расписание поездов · Ж/д билеты {{ fromRailway }} → {{ toRailway }}
+                    </p>
+                    <h3>
+                        Расписание поездов {{ fromRailway }} — {{ toRailway }}
+                    </h3>
+                    <p>
+                        Открыта продажа билетов на 7 марта · Отправление и прибытие по местному времени. Цены за 1 пассажира
+                    </p>
+                </div>
+            </div>
+            <div class="offerSearchAndService" v-else-if="offersType.includes('busses')">
+                <div class="input-group inputDatePicker">
+                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+                    <input v-model="dateBuss" type="text" placeholder="Дата" class="form-control planeInput" />
+                    <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                </div>
+            </div>
+            <div class="offerShowTimetable" v-else-if="offersType.includes('trains')">
+                <div class="w-100">
+                    <div class="input-group inputLogo">
+                        <input v-model="trainFrom" type="text" placeholder="Откуда" class="form-control planeInput" />
+                        <span class="input-group-text material-icons" id="basic-addon1">tram</span>
+                    </div>
+                    <span class="trainExample" @click="trainFrom = 'Москва'">
+                        Москва
+                    </span>    
+                </div>
+                <div class="w-100">
+                    <div class="input-group inputLogo">
+                        <input v-model="trainTo" type="text" placeholder="Куда" class="form-control planeInput" />
+                        <span class="input-group-text material-icons" id="basic-addon1">tram</span>
+                    </div>
+                    <span class="trainExample" @click="trainTo = 'Петушки'">
+                        Петушки
+                    </span>        
+                </div>
+                <div class="input-group inputDatePicker">
+                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+                    <input v-model="dateTrain" type="text" placeholder="Дата" class="form-control planeInput" />
+                    <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                </div>
+                <button @click="refreshRoutes()" class="btn btn-light showTimetableBtn">
+                    Показать расписание
+                </button>
+            </div>
+            <div class="offersBody">
+                <div v-if="offers.length >= 1">
                     <div v-if="offersType.includes('airplanes')">
-                        <div v-for="airplaneOffer in offers" :key="airplaneOffer._id" class="offer">
+                        <div class="offersCount">
+                            <span>
+                                {{ offers.length }} предложение, 
+                            </span>
+                            <span class="inexpensive">
+                                сначала недорогие
+                            </span>
+                            <span class="material-icons">
+                                filter_list
+                            </span>
+                        </div>
+                        <span class="">
+                            Отправление и прибытие по местному времени
+                        </span>
+                        <div v-for="airplaneOffer in offers.filter(offer => {
+                            return (offer.date === datePlane || offer.date === backPlane) && offer.from === fromPlane && offer.to === toPlane && ((thingsPlane && offer.isThings) || (!thingsPlane && !offer.isThings ))  && ((returnPlane && offer.isReturn) || (!returnPlane && !offer.isReturn ))
+                        })" :key="airplaneOffer._id" class="offer">
                             <div class="offerAside">
                                 <div class="offerAsideColumn">
                                     <div class="offerServiceFilters">
@@ -160,7 +332,9 @@
                         </div>
                     </div>
                     <div v-else-if="offersType.includes('railways')">
-                        <div v-for="railwayOffer in offers" :key="railwayOffer._id" class="offer">
+                        <div v-for="railwayOffer in offers.filter(offer => {
+                            return offer.to === toRailway && offer.from === fromRailway && offer.date === dateRailway
+                        })" :key="railwayOffer._id" class="offer">
                             <div class="offerAside">
                                 <div class="offerAsideColumn">
                                     <div class="offerServiceFilters">
@@ -322,6 +496,98 @@
                             </div>
                         </div>
                     </div>
+                    <div v-else-if="offersType.includes('trains')">
+                        <span class="">
+                            Расписание электричек • Москва • Горьковское направление • Расписание электричек {{ trainFrom }} → {{ trainTo }}
+                        </span>
+                        <div class="offersCount">
+                            <span>
+                                Расписание электричек {{ trainFrom }} → {{ trainTo }} на сегодня
+                            </span>
+                        </div>
+                        <div class="trainRow">
+                            <span>
+                                базовое расписание
+                            </span>
+                            <span :class="{ offerServiceFilterTrain: true, offerServiceFilterTrainActive: dateTrain.includes(new Date().toLocaleDateString()) }" @click="dateTrain = new Date().toLocaleDateString()">
+                                сегодня, 8 ноября
+                            </span>
+                            <span :class="{ offerServiceFilterTrain: true, offerServiceFilterTrainActive: dateTrain.includes(getTrainTommorow()) }" @click="setTrainTommorow()">
+                                завтра
+                            </span>
+                            <span :class="{ offerServiceFilterTrain: true, offerServiceFilterTrainActive: dateTrain.includes(getTrainDayAfterTomorrow()) }" @click="setTrainDayAfterTomorrow()">
+                                послезавтра
+                            </span>
+                            <span>
+                                другой день
+                            </span>
+                        </div>
+                        <div class="trainRow">
+                            <span class="offerServiceFilterTrain">
+                                Все поезда
+                            </span>
+                            <span>
+                                Скорые
+                            </span>
+                            <span>
+                                Экспрессы
+                            </span>
+                        </div>
+                        <div class="trainOffer">
+                            <div class="bussOfferAside">
+                                <span class="trainSendColumn">
+                                    Отпр.
+                                </span>
+                                <span class="trainReceiveColumn">
+                                    Приб.
+                                </span>
+                                <span class="trainMoveColumn">
+                                    В пути
+                                </span>
+                                <span class="trainModeMoveColumn">
+                                    Режим движения
+                                </span>
+                                <span class="trainRouteColumn">
+                                    Маршрут электрички
+                                </span>
+                                <span class="trainPriceColumn">
+                                    Цена
+                                </span>
+                            </div>
+                        </div>
+                        <div v-for="trainOffer in offers.filter(offer => {
+                            return offer.to === trainTo && offer.from === trainFrom && offer.date === dateTrain
+                        })" :key="trainOffer._id" class="trainOffer">
+                            <div class="bussOfferAside">
+                                <span class="trainFromTime">
+                                    {{ trainOffer.fromTime }}
+                                </span>
+                                <span class="trainToTime">
+                                    {{ trainOffer.toTime }}
+                                </span>
+                                <span>
+                                    {{
+                                        hoursLabels[trainOffer.toTime.split(':')[0]] - hoursLabels[trainOffer.fromTime.split(':')[0]] - 1
+                                    }} ч 
+                                    {{
+                                        minutesLabels[trainOffer.toTime.split(':')[1]] > minutesLabels[trainOffer.toTime.split(':')[1]] ?
+                                            minutesLabels[trainOffer.toTime.split(':')[1]] - minutesLabels[trainOffer.fromTime.split(':')[1]] - 1
+                                        :
+                                            60 - minutesLabels[trainOffer.fromTime.split(':')[1]] + minutesLabels[trainOffer.toTime.split(':')[1]] 
+                                    }} м
+                                </span>
+                                <span>
+                                    {{ trainOffer.from }} → {{ trainOffer.to }}
+                                </span>
+                                <span>
+                                    Ежедневно
+                                </span>
+                                <span>
+                                    {{ 52 }}Ք
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div v-else class="notFoundOffers">
                     <span>
@@ -465,46 +731,107 @@ export default {
                 '7': 'пт',
                 '1': 'сб',
                 '2': 'вс',
-            }
+            },
+            trainTo: '',
+            trainFrom: '',
+            dateTrain: '',
+            dateBuss: '',
+            toRailway: '',
+            fromRailway: '',
+            dateRailway: '',
+            toPlane: '',
+            fromPlane: '',
+            datePlane: '',
+            backPlane: '',
+            planeChangeSearch: true,
+            thingsPlane: false,
+            returnPlane: false
         }
     },
     mounted(){
         if(this.$route.query.offerstype !== null && this.$route.query.offerstype !== undefined) {
             this.offersType = this.$route.query.offerstype
-        }
-        fetch(`http://localhost:4000/api/offers/get/?offerstype=${this.offersType}`, {
-              mode: 'cors',
-              method: 'GET'
-        }).then(response => response.body).then(rb  => {
-            const reader = rb.getReader()
-            return new ReadableStream({
-              start(controller) {
-                function push() {
-                  reader.read().then( ({done, value}) => {
-                    if (done) {
-                      console.log('done', done);
-                      controller.close();
-                      return;
-                    }
-                    controller.enqueue(value);
-                    console.log(done, value);
-                    push();
-                  })
-                }
-                push();
-              }
-            });
-        }).then(stream => {
-            return new Response(stream, { headers: { "Content-Type": "text/html" } }).text();
-        })
-        .then(result => {
-            if(JSON.parse(result).status.includes('OK')) {
-                this.offers = JSON.parse(result).offers
-                console.log(`debug : ${new Date(`2021-7-11`).getDate()}`)
+            if(this.offersType.includes('airplanes')){
+                this.fromPlane = this.$route.query.from
+                this.toPlane = this.$route.query.to
+                this.datePlane = this.$route.query.date
+                this.backPlane = this.$route.query.backdate
+            } else if(this.offersType.includes('railways')){
+                this.fromRailway = this.$route.query.from
+                this.toRailway = this.$route.query.to
+                this.dateRailway = this.$route.query.date
+            } else if(this.offersType.includes('trains')){
+                this.trainFrom = this.$route.query.from
+                this.trainTo = this.$route.query.to
+                this.dateTrain = this.$route.query.date
             }
-        });
+        }
+        this.refreshRoutes()
     },
     methods: {
+        swapPlaneFromAndTo(){
+            let tempToPlane = this.toPlane
+            this.toPlane = this.fromPlane
+            this.fromPlane = tempToPlane
+        },
+        swapRailwayFromAndTo(){
+            let tempToRailway = this.toRailway
+            this.toRailway = this.fromRailway
+            this.fromRailway = tempToRailway
+        },
+        getTrainDayAfterTomorrow(){
+            let now = new Date()
+            now.setDate(now.getDate() + 2)
+            return now.toLocaleDateString()
+        },
+        setTrainDayAfterTomorrow(){
+            let now = new Date()
+            now.setDate(now.getDate() + 2)
+            this.dateTrain = now.toLocaleDateString()
+        },
+        getTrainTommorow(){
+            let now = new Date()
+            now.setDate(now.getDate() + 1)
+            return now.toLocaleDateString()
+        },
+        setTrainTommorow(){
+            let now = new Date()
+            now.setDate(now.getDate() + 1)
+            this.dateTrain = now.toLocaleDateString()
+        },
+        refreshRoutes(){
+            fetch(`http://localhost:4000/api/offers/get/?offerstype=${this.offersType}`, {
+                mode: 'cors',
+                method: 'GET'
+            }).then(response => response.body).then(rb  => {
+                const reader = rb.getReader()
+                return new ReadableStream({
+                start(controller) {
+                    function push() {
+                    reader.read().then( ({done, value}) => {
+                        if (done) {
+                        console.log('done', done);
+                        controller.close();
+                        return;
+                        }
+                        controller.enqueue(value);
+                        console.log(done, value);
+                        push();
+                    })
+                    }
+                    push();
+                }
+                });
+            }).then(stream => {
+                return new Response(stream, { headers: { "Content-Type": "text/html" } }).text();
+            })
+            .then(result => {
+                if(JSON.parse(result).status.includes('OK')) {
+                    this.offers = JSON.parse(result).offers
+                    console.log(`debug : ${new Date(`2021-7-11`).getDate()}`)
+                }
+            });
+        },
         payTicket(offerId) {
             fetch(`http://localhost:4000/api/tickets/pay/?offerstype=${this.offersType}&offerid=${offerId}`, {
                 mode: 'cors',
@@ -829,6 +1156,19 @@ export default {
         margin: 15px 0px;
     }
 
+    .trainOffer {
+        display: flex;
+        flex-direction: column;
+        /* border-radius: 15px; */
+        justify-content: center;
+        background-color: rgb(255, 255, 255);
+        box-sizing: border-box;
+        padding: 10px 25px;
+        height: 50px;
+        margin: 0px;
+        border-bottom: 1px solid rgb(175, 175, 175);
+    }
+
     .bussPrice {
         font-weight: bolder;
         color: rgb(0, 100, 255);
@@ -848,6 +1188,225 @@ export default {
     .bussArticle {
         display: flex;
         justify-content: space-between;
+    }
+
+    .trainFromTime {
+        font-weight: bolder;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: rgb(0, 100, 255);
+    }
+
+    .trainToTime {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        color: rgb(0, 100, 255);
+    }
+
+    .inputDatePicker {
+        width: 1025px;
+    }
+
+    .offerShowTimetable {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        width: 90%;
+        height: 100px;
+        border-bottom: 1px solid rgb(175, 175, 175);
+    }
+
+    .offerShowTimetable > * {
+        margin: 0px 5px;
+    }
+
+    .showTimetableBtn {
+        width: 775px;
+        border: 1px solid rgb(0, 0, 0);
+        color: rgb(0, 100, 255);
+        font-weight: bolder;
+    }
+
+    .trainExample {
+        color: rgb(150, 150, 150);
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+        text-decoration-style: dashed;
+    }
+
+    .trainSendColumn {
+        color: rgb(255, 0, 0);
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        text-underline-offset: 3px;
+    }
+    
+    .trainReceiveColumn {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        text-underline-offset: 3px;
+    }
+    
+    .trainMoveColumn {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        text-underline-offset: 3px;
+    }
+    
+    .trainModeMoveColumn {
+        
+    }
+
+    .trainPriceColumn {
+
+    }
+
+    .offerServiceFilterTrain {
+        cursor: pointer;
+    }
+
+    .offerServiceFilterTrainActive {
+        margin: 0px 5px;
+        border-radius: 15px;
+        background-color: rgb(255, 200, 255);
+        color: rgb(0, 0, 0);
+        width: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .trainRow {
+        display: flex;
+        margin: 15px 0px;
+    }
+
+    .trainRow > * {
+        margin: 0px 5px;
+    }
+
+    .railwaySearch {
+        background-color: rgb(150, 150, 150);
+        border-radius: 15px;
+        width: 100%;
+        height: 150px;
+        box-sizing: border-box;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .railwaySearch > * {
+        margin: 0px 5px;
+    }
+
+    .inputRailway {
+        width: 150px;
+    }
+
+    .inputRailwayDatePicker {
+        width: 250px;
+    }
+
+    .backDate {
+        width: 65px;
+        color: rgb(255, 255, 255);
+        margin-right: 75px;
+    }
+
+    .railwayService {
+        background-color: rgb(255, 255, 255);
+        box-sizing: border-box;
+        padding: 0px 175px;
+    }
+
+    .railwaysSwapper {
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+    }
+
+    .searchBlockPlane:hover {
+        background-color: rgb(255, 215, 255);
+        cursor: pointer;
+    }
+
+    .planeService {
+        display: flex;
+        align-items: center;
+    }
+
+    .planeService > * {
+        margin: 0px 5px;
+    }
+
+    .inputPlane {
+        width: 125px;
+    }
+
+    .planeBtn {
+        width: 150px;
+    }
+
+    .planeChangeSearchBtn {
+        color: rgb(0, 0, 255);
+        width: 250px;
+    }
+
+    .searchBlockPlane:hover .planeChangeSearchBtn {
+        color: rgb(255, 0, 0);
+    }
+
+    .planeServiceHeader {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .offerServiceItem {
+        background-color: rgb(255, 255, 255);
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        box-sizing: border-box;
+        min-width: 125px;
+        padding: 0px 5px;
+        border: 1px solid rgb(0, 100, 255);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        margin: 0px 15px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .offerServiceItem:hover {
+        border: 1px solid rgb(255, 0, 0);
+    }
+
+    .offerServiceItem:hover > .offerServiceItemHeader {
+        color: rgb(255, 0, 0);
+    }
+
+    .offerServiceItemHeader {
+        color:rgb(0, 0, 255);
+    }
+
+    .offerServiceItemFooter {
+        font-size: 12px;
+        color:rgb(0, 150, 150);
+    }
+    
+    .offerServiceItem:hover {
+        color: rgb(255, 0, 0);
+    }
+
+    .offerServiceContainer {
+        display: flex;
+    }
+
+    .offerServiceItemActive {
+        background-color: rgb(235, 235, 235);
     }
 
 </style>

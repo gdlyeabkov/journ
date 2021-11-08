@@ -9,7 +9,7 @@
             </span>
         </div>
         <div class="headerBanner">
-            <div>
+            <div class="logo" @click="$router.push({ name: 'Home' })">
                 <img width="175px" src="https://cdn1.tu-tu.ru/images2/bemp/svg/logo/2018/logo_tutu_final.svg" alt="" />
                 <span class="tagline">
                     {{ tagline }}
@@ -198,6 +198,10 @@ export default {
     }
 
     .warningCloser {
+        cursor: pointer;
+    }
+
+    .logo {
         cursor: pointer;
     }
 

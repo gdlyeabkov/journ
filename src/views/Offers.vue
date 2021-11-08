@@ -19,7 +19,7 @@
                         <h4>
                             Поиск рейсов
                         </h4>
-                        <span class="material-icons">
+                        <span @click="planeChangeSearch = !planeChangeSearch" class="closer material-icons">
                             close
                         </span>
                     </div>
@@ -42,7 +42,7 @@
                         </button>
                     </div>
                 </div>
-                 <div class="offerService offerServiceContainer">
+                 <div @scroll="airportDialog = false; aircompanyDialog = false; startTimeDialog = false" class="offerService offerServiceContainer">
                     <div :class="{ offerServiceItem: true, offerServiceItemActive: transferPlane }" @click="transferPlane = !transferPlane">
                          <span class="offerServiceItemHeader">
                             Прямой
@@ -83,7 +83,7 @@
                             от 3 905 Ք
                          </span>
                      </div>
-                     <div class="offerServiceItem">
+                     <div :class="{ offerServiceItem: true, offerServiceItemActive: companyPlane.includes('S7 Airlines') }" @click="companyPlane.includes('S7 Airlines') ? companyPlane = '' : companyPlane = 'S7 Airlines'">
                          <span class="offerServiceItemHeader">
                             S7 Airlines
                          </span>
@@ -91,26 +91,41 @@
                             от 3 615 Ք
                          </span>
                      </div>
-                     <div class="offerServiceItem">
-                         <span class="offerServiceItemHeader">
-                            Авиакомпания
-                         </span>
+                     <div class="offerServiceItem" @click="aircompanyDialog = !aircompanyDialog">
+                        <div>
+                            <span class="offerServiceItemHeader">
+                                Авиакомпания
+                            </span>
+                            <span class="material-icons">
+                                expand_more
+                            </span>
+                         </div>
                          <span class="offerServiceItemFooter">
                             Любая
                          </span>
                      </div>
-                     <div class="offerServiceItem">
-                         <span class="offerServiceItemHeader">
-                            Аэропорт вылета
-                         </span>
+                     <div class="offerServiceItem" @click="airportDialog = !airportDialog">
+                         <div>
+                             <span class="offerServiceItemHeader">
+                                Аэропорт вылета
+                            </span>
+                             <span class="material-icons">
+                                expand_more
+                            </span>
+                         </div>
                          <span class="offerServiceItemFooter">
                             Любой
                          </span>
                      </div>
-                     <div class="offerServiceItem">
-                         <span class="offerServiceItemHeader">
-                            Время отправления
-                         </span>
+                     <div class="offerServiceItem" @click="startTimeDialog = !startTimeDialog">
+                         <div>
+                            <span class="offerServiceItemHeader">
+                                Время отправления
+                            </span>
+                            <span class="material-icons">
+                                expand_more
+                            </span>
+                         </div>
                          <span class="offerServiceItemFooter">
                             Любое
                          </span>
@@ -206,7 +221,7 @@
                             Отправление и прибытие по местному времени
                         </span>
                         <div v-for="airplaneOffer in offers.filter(offer => {
-                            return (offer.date === datePlane || offer.date === backPlane) && offer.from === fromPlane && offer.to === toPlane && ((thingsPlane && offer.isThings) || (!thingsPlane && !offer.isThings ))  && ((returnPlane && offer.isReturn) || (!returnPlane && !offer.isReturn )) && ((transferPlane && offer.isTrasfer) || (!transferPlane && !offer.isTrasfer )) && ((!transferPlane && !offer.isTrasfer) || (transferPlane && offer.isTrasfer )) && ((offer.company === companyPlane && companyPlane.length >= 1) || companyPlane.length <= 0)
+                            return (offer.date === datePlane || offer.date === backPlane) && offer.from === fromPlane && offer.to === toPlane && ((thingsPlane && offer.isThings) || (!thingsPlane && !offer.isThings ))  && ((returnPlane && offer.isReturn) || (!returnPlane && !offer.isReturn )) && ((transferPlane && offer.isTrasfer) || (!transferPlane && !offer.isTrasfer )) && ((!transferPlane && !offer.isTrasfer) || (transferPlane && offer.isTrasfer )) && ((offer.company === companyPlane && companyPlane.length >= 1) || companyPlane.length <= 0) && selectedAirports.includes(offer.airport) && selectedAirCompanies.includes(offer.company) && ((selectedStartTimes.includes('Ночь') && (offer.fromTime.split(':')[0] >= '00' && offer.fromTime.split(':')[0] <= '03' && offer.fromTime.split(':')[0] >= '22')) || !selectedStartTimes.includes('Ночь')) && ((selectedStartTimes.includes('Вечер') && (offer.fromTime.split(':')[0] >= '16' && offer.fromTime.split(':')[0] <= '21')) || !selectedStartTimes.includes('Вечер')) && ((selectedStartTimes.includes('День') && (offer.fromTime.split(':')[0] >= '10' && offer.fromTime.split(':')[0] <= '15')) || !selectedStartTimes.includes('День')) && (selectedStartTimes.includes('Утро') && ((offer.fromTime.split(':')[0] >= '04' && offer.fromTime.split(':')[0] <= '09')) || !selectedStartTimes.includes('Утро'))
                         })" :key="airplaneOffer._id" class="offer">
                             <div class="offerAside">
                                 <div class="offerAsideColumn">
@@ -595,6 +610,287 @@
                     </span>
                 </div>
             </div>
+            <div v-if="offersType.includes('airplanes')">
+                <div class="airplaneCompanyDialog" v-if="aircompanyDialog">
+                    <div>
+                        <input :value="'Россия'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Россия
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Россия'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Аэрофлот'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Аэрофлот
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Аэрофлот'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Якутия'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Якутия
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Якутия'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Победа'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Победа
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Победа'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'S7 Airlines'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            S7 Airlines
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'S7 Airlines'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Ютэйр'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Ютэйр
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Ютэйр'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Уральские авиалинии'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Уральские авиалинии
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Уральские авиалинии'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Пегас флай'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Пегас флай
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Пегас флай'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Северный ветер'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Северный ветер
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Северный ветер'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Азимут'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Азимут
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Азимут'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'НордСтар'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            НордСтар
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'НордСтар'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'АЛРОСА'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            АЛРОСА
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'АЛРОСА'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Belavia'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Belavia
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Belavia'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Руслайн'" name="selectedAirCompanies" v-model="selectedAirCompanies" type="checkbox" />
+                        <span>
+                            Руслайн
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.company === 'Руслайн'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div class="airportDialog" v-if="airportDialog">
+                    <div>
+                        <input :value="'Внуково'" name="selectedAirports" v-model="selectedAirports" type="checkbox" />
+                        <span>
+                            Внуково
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.airport === 'Внуково'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Шереметьево'" name="selectedAirports" v-model="selectedAirports" type="checkbox" />
+                        <span>
+                            Шереметьево
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.airport === 'Шереметьево'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Домодедово'" name="selectedAirports" v-model="selectedAirports" type="checkbox" />
+                        <span>
+                            Домодедово
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.airport === 'Домодедово'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div class="startTimeDialog" v-if="startTimeDialog">
+                    <div>
+                        <input :value="'Ночь'" name="selectedStartTimes" v-model="selectedStartTimes" type="checkbox" />
+                        <span>
+                            Ночь
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.fromTime.split(':')[0] >= '00' && offer.fromTime.split(':')[0] <= '03' && offer.fromTime.split(':')[0] >= '22'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Утро'" name="selectedStartTimes" v-model="selectedStartTimes" type="checkbox" />
+                        <span>
+                            Утро
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.fromTime.split(':')[0] >= '04' && offer.fromTime.split(':')[0] <= '09'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'День'" name="selectedStartTimes" v-model="selectedStartTimes" type="checkbox" />
+                        <span>
+                            День
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.fromTime.split(':')[0] >= '10' && offer.fromTime.split(':')[0] <= '15'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                    <div>
+                        <input :value="'Вечер'" name="selectedStartTimes" v-model="selectedStartTimes" type="checkbox" />
+                        <span>
+                            Вечер
+                        </span>
+                        <span>
+                            от {{
+                                offers.filter(offer => {
+                                    return offer.fromTime.split(':')[0] >= '16' && offer.fromTime.split(':')[0] <= '21'
+                                }).length
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
         <Footer />
     </div>
@@ -747,7 +1043,32 @@ export default {
             planeChangeSearch: true,
             thingsPlane: false,
             returnPlane: false,
-            transferPlane: false
+            transferPlane: false,
+            aircompanyDialog: false,
+            airportDialog: false,
+            startTimeDialog: false,
+            selectedAirports: [
+                'Внуково',
+                'Шереметьево',
+                'Домодедово'
+            ],
+            selectedStartTimes: [],
+            selectedAirCompanies: [
+                'Россия',
+                'Аэрофлот',
+                'Якутия',
+                'Победа',
+                'S7 Airlines',
+                'Ютэйр',
+                'Уральские авиалинии',
+                'Пегас флай',
+                'Северный ветер',
+                'Азимут',
+                'НордСтар',
+                'АЛРОСА',
+                'Belavia',
+                'Руслайн',
+            ],
         }
     },
     mounted(){
@@ -1371,7 +1692,7 @@ export default {
         align-items: center;
         height: 100%;
         box-sizing: border-box;
-        min-width: 125px;
+        min-width: 225px;
         padding: 0px 5px;
         border: 1px solid rgb(0, 100, 255);
         border-radius: 8px;
@@ -1410,5 +1731,68 @@ export default {
     .offerServiceItemActive {
         background-color: rgb(235, 235, 235);
     }
+
+    .closer {
+        cursor: pointer;
+    }
+    
+    .airplaneCompanyDialog {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+        position: absolute;
+        top: 350px;
+        left: 400px;
+        width: 285px;
+        height: 350px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 0px 0px 10px rgb(150, 150, 150);
+    }
+    
+    .airplaneCompanyDialog > div > * {
+        margin: 0px 5px;
+    }
+
+    .airportDialog {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+        position: absolute;
+        top: 350px;
+        left: 700px;
+        width: 250px;
+        height: 350px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 0px 0px 10px rgb(150, 150, 150);
+    }
+
+    .airportDialog > div > * {
+        margin: 0px 5px;
+    }
+
+    .startTimeDialog {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+        position: absolute;
+        top: 350px;
+        left: 1000px;
+        width: 175px;
+        height: 200px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 0px 0px 10px rgb(150, 150, 150);
+    }
+
+    .startTimeDialog > div > * {
+        margin: 0px 5px;
+    }
+    
+
 
 </style>

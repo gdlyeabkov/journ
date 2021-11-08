@@ -4,7 +4,7 @@
     <div class="main">
       <div class="services">
         <div class="servicesLogos">
-          <div @click="activeTab = 'Авиабилеты'" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Авиабилеты') }">
+          <div @click="changeTab('Авиабилеты')" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Авиабилеты') }">
             <span class="serviceLogoItem material-icons">
               flight
             </span>
@@ -12,7 +12,7 @@
               Авиабилеты
             </span>
           </div>
-          <div @click="activeTab = 'Ж/д билеты'" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Ж/д билеты') }">
+          <div @click="changeTab('Ж/д билеты')" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Ж/д билеты') }">
             <span class="serviceLogoItem material-icons">
               train
             </span>
@@ -20,7 +20,7 @@
               Ж/д билеты
             </span>
           </div>
-          <div @click="activeTab = 'Автобусы'" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Автобусы') }">
+          <div @click="changeTab('Автобусы')" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Автобусы') }">
             <span class="serviceLogoItem material-icons">
               directions_bus
             </span>
@@ -28,7 +28,7 @@
               Автобусы
             </span>
           </div>
-          <div @click="activeTab = 'Электрички'" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Электрички') }">
+          <div @click="changeTab('Электрички')" :class="{ serviceLogo: true, activeServiceLogo: activeTab.includes('Электрички') }">
             <span class="serviceLogoItem material-icons">
               tram
             </span>
@@ -46,7 +46,7 @@
           </div>
           <div @click="$router.push({ name: 'Tours' })" :class="{ serviceLogo: true }">
             <span class="serviceLogoItem material-icons">
-              where_to_vote
+              room
             </span>
             <span class="serviceLogoLabel">
               Приключения
@@ -362,6 +362,18 @@ export default {
     }
   },
   methods: {
+    changeTab(tab) {
+      this.activeTab = tab
+      if(tab.includes('Авиабилеты')) {
+        document.body.style.backgroundImage = `url(https://wallpaperaccess.com/full/254381.jpg)`
+      } else if(tab.includes('Ж/д билеты')) {
+        document.body.style.backgroundImage = `url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5odRECi00z_6WVRMVjpCaaE3JkMHbmt5p6Q&usqp=CAU)`
+      } else if(tab.includes('Автобусы')) {
+        document.body.style.backgroundImage = `url(https://uj-images.ru/images/article/2020/08/5f3df27d98bf2.png)`
+      } else if(tab.includes('Электрички')) {
+        document.body.style.backgroundImage = `url(https://bw4u.ru/upload/iblock/945/945db4a246fd0444f4dada6f7d290a84.jpg)`
+      }
+    },
     toggleDate(direction, datePicker){
       if(direction.includes('left')){
         let now = new Date(`${datePicker.split('.')[2]}`, `${datePicker.split('.')[1]}`, `${datePicker.split('.')[0]}`)

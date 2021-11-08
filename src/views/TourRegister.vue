@@ -21,7 +21,33 @@
                 <input type="text" v-model="newAirplaneOfferDate" placeholder="Дата" class="form-control w-25" />
                 <input type="text" v-model="newAirplaneOfferFromTime" placeholder="Время отправления" class="form-control w-25" />
                 <input type="text" v-model="newAirplaneOfferToTime" placeholder="Время прибытия" class="form-control w-25" />
-                <input type="text" v-model="newAirplaneOfferAirport" placeholder="Аэропорт" class="form-control w-25" />
+                <label for="" class="formLabel">
+                    Аэропорт
+                </label>
+                <select v-model="newAirplaneOfferAirport" class="form-select h-75 w-25" aria-label="Default select example">
+                    <option value="Шереметьево">Шереметьево</option>
+                    <option value="Домодедово">Домодедово</option>
+                    <option value="Внуково">Внуково</option>
+                </select>
+                <label for="" class="formLabel">
+                    Авиакомпания
+                </label>
+                <select v-model="newAirplaneOfferCompany" class="form-select h-75 w-25" aria-label="Default select example">
+                    <option value="Аэрофлот">Аэрофлот</option>
+                    <option value="Россия">Россия</option>
+                    <option value="Уральские авиалинии">Уральские авиалинии</option>
+                    <option value="Якутия">Якутия</option>
+                    <option value="S7 Airlines">S7 Airlines</option>
+                    <option value="Победа">Победа</option>
+                    <option value="Северный ветер">Северный ветер</option>
+                    <option value="Пегас Флай">Пегас Флай</option>
+                    <option value="Ютейр">Ютейр</option>
+                    <option value="Шереметьево">Belavia</option>
+                    <option value="НордСтар">НордСтар</option>
+                    <option value="Азимут">Азимут</option>
+                    <option value="Руслайн">Руслайн</option>
+                    <option value="АЛРОСА">АЛРОСА</option>
+                </select>
                 <label for="" class="formLabel">
                     С возвратом
                 </label>
@@ -30,6 +56,10 @@
                     Багаж
                 </label>
                 <input type="checkbox" v-model="newAirplaneOfferIsThings" />
+                <label for="" class="formLabel">
+                    С пересадками
+                </label>
+                <input type="checkbox" v-model="newAirplaneOfferIsTransfer" />
                 <button class="btn btn-primary" @click="createTour()">
                     Создать аэромаршрут
                 </button>
@@ -143,9 +173,11 @@ export default {
             newAirplaneOfferDate: '',
             newAirplaneOfferFromTime: '',
             newAirplaneOfferToTime: '',
-            newAirplaneOfferAirport: '',
+            newAirplaneOfferAirport: 'Шереметьево',
             newAirplaneOfferIsReturn: false,
             newAirplaneOfferIsThings: false,
+            newAirplaneOfferCompany: 'Аэрофлот',
+            newAirplaneOfferIsTransfer: false,
             newRailwayOfferFromTime: '',
             newRailwayOfferToTime: '',
             newRailwayOfferTo: '',
@@ -188,7 +220,7 @@ export default {
     methods: {
         createTour() {
             if(this.offersType.includes('airplanes')) {
-                fetch(`http://localhost:4000/api/tickets/airplanes/create/?newairplaneofferfromtime=${this.newAirplaneOfferFromTime}&newairplaneoffertotime=${this.newAirplaneOfferToTime}&newairplaneofferprice=${this.newAirplaneOfferPrice}&newairplaneofferfrom=${this.newAirplaneOfferFrom}&newairplaneofferto=${this.newAirplaneOfferTo}&newairplaneofferdate=${this.newAirplaneOfferDate}&newairplaneofferairport=${this.newAirplaneOfferAirport}&newairplaneofferisreturn=${this.newAirplaneOfferIsReturn}&newairplaneofferisthings=${this.newAirplaneOfferIsThings}`, {
+                fetch(`http://localhost:4000/api/tickets/airplanes/create/?newairplaneofferfromtime=${this.newAirplaneOfferFromTime}&newairplaneoffertotime=${this.newAirplaneOfferToTime}&newairplaneofferprice=${this.newAirplaneOfferPrice}&newairplaneofferfrom=${this.newAirplaneOfferFrom}&newairplaneofferto=${this.newAirplaneOfferTo}&newairplaneofferdate=${this.newAirplaneOfferDate}&newairplaneofferairport=${this.newAirplaneOfferAirport}&newairplaneofferisreturn=${this.newAirplaneOfferIsReturn}&newairplaneofferisthings=${this.newAirplaneOfferIsThings}&newairplaneoffercompany=${this.newAirplaneOfferCompany}&newairplaneofferistransfer=${this.newAirplaneOfferIsTransfer}`, {
                     mode: 'cors',
                     method: 'GET'
                 }).then(response => response.body).then(rb  => {
@@ -223,8 +255,10 @@ export default {
                         this.newAirplaneOfferToTime = ''
                         this.newAirplaneOfferIsReturn = false
                         this.newAirplaneOfferIsThings = false
-                        this.newAirplaneOfferAirport = ''
+                        this.newAirplaneOfferAirport = 'Шереметьево'
                         this.newAirplaneOfferPrice = 0
+                        this.newAirplaneOfferCompany = 'Аэрофлот'
+                        this.newAirplaneOfferIsTransfer = false
                     } else if(JSON.parse(result).status.includes('Error')) {
                         alert('ошибка при создании тура')
                     }

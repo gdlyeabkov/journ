@@ -43,12 +43,14 @@ const AirplaneTicketSchema = new mongoose.Schema({
     from: String,
     to: String,
     date: String,
+    company: String,
     tickets: {
         type: Number,
         default: 5
     },
     isThings: Boolean,
     isReturn: Boolean,
+    isTransfer: Boolean,
     airport: String,
     ratio: {
         type: String,
@@ -176,7 +178,7 @@ app.get('/api/tickets/airplanes/create', (req, res) => {
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-Access-Token, X-Socket-ID, Content-Type");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
     
-    const newAirplaneOffer = new AirplaneTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings })
+    const newAirplaneOffer = new AirplaneTicketModel({ fromTime: req.query.newairplaneofferfromtime, toTime: req.query.newairplaneoffertotime, price: Number(req.query.newairplaneofferprice), from: req.query.newairplaneofferfrom, to: req.query.newairplaneofferto, date: req.query.newairplaneofferdate, airport: req.query.newairplaneofferairport, isReturn: req.query.newairplaneofferisreturn, isThings: req.query.newairplaneofferisthings, company: req.query.newairplaneoffercompany, isTransfer: req.query.newairplaneofferistransfer })
     newAirplaneOffer.save(function (err) {
         if(err){
             return res.json({ "status": "Error" })

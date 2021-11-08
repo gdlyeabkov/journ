@@ -151,17 +151,17 @@
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
                 <input v-model="fromRailway" type="text" placeholder="Откуда" class="form-control planeInput" required />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">train</span>
               </div>
               <div class="input-group inputLogo">
                 <input v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput" />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">train</span>
               </div>
               <div class="input-group inputDatePicker">
-                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1" @click="toggleDate('left', dateRailway)">arrow_left</span>
                 <input v-model="dateRailway" type="text" placeholder="Дата" class="form-control planeInput" />
                 <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
-                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1" @click="toggleDate('right', dateRailway)">arrow_right</span>
               </div>
               <span>
                 Указать дату обратно
@@ -188,11 +188,11 @@
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
                 <input v-model="fromBus" type="text" placeholder="Откуда" class="form-control planeInput" required />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">directions_bus</span>
               </div>
               <div class="input-group inputLogo">
                 <input v-model="toBus" type="text" placeholder="Куда" class="form-control planeInput" required />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">directions_bus</span>
               </div>
               <div class="input-group inputLogo">
                 <input v-model="dateBus" type="text" placeholder="Дата вылета" class="form-control planeInput" required />
@@ -257,17 +257,17 @@
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
                 <input v-model="fromTrain" type="text" placeholder="Откуда" class="form-control planeInput" required />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">tram</span>
               </div>
               <div class="input-group inputLogo">
                 <input v-model="toTrain" type="text" placeholder="Куда" class="form-control planeInput" required />
-                <span class="input-group-text material-icons" id="basic-addon1">flight</span>
+                <span class="input-group-text material-icons" id="basic-addon1">tram</span>
               </div>
               <div class="input-group inputDatePicker">
-                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
+                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1" @click="toggleDate('left', dateTrain)">arrow_left</span>
                 <input v-model="dateTrain" type="text" placeholder="Дата" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
-                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1" @click="toggleDate('right', dateTrain)">arrow_right</span>
               </div>
               <button class="btn btn-primary colorBtn" @click="findTickets('trains')">
                 Показать расписание
@@ -354,7 +354,38 @@ export default {
       dateTrain: new Date().toLocaleDateString(),
     }
   },
+  mounted(){
+    Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    }
+  },
   methods: {
+    toggleDate(direction, datePicker){
+      if(direction.includes('left')){
+        let now = new Date(`${datePicker.split('.')[2]}`, `${datePicker.split('.')[1]}`, `${datePicker.split('.')[0]}`)
+        // now.setDate(now.getDate() - 1)
+        now = now.addDays(-1)
+        now.setMonth(now.getMonth() - 1)
+        this.dateRailway = now.toLocaleDateString()
+        if(this.activeTab.includes('Ж/д билеты')) {
+          this.dateRailway = now.toLocaleDateString()
+        } else if(this.activeTab.includes('Электрички')) {
+          this.dateTrain = now.toLocaleDateString()
+        }
+      } else if(direction.includes('right')){
+        let now = new Date(`${datePicker.split('.')[2]}`, `${datePicker.split('.')[1]}`, `${datePicker.split('.')[0]}`)
+        // now.setDate(now.getDate() + 1)
+        now = now.addDays(1)
+        now.setMonth(now.getMonth() - 1)
+        if(this.activeTab.includes('Ж/д билеты')) {
+          this.dateRailway = now.toLocaleDateString()
+        } else if(this.activeTab.includes('Электрички')) {
+          this.dateTrain = now.toLocaleDateString()
+        }
+      }
+    },
     findTickets(type){
       if(type.includes('airplanes')) {
         if(this.$refs.planeForm.reportValidity()) {
@@ -481,6 +512,8 @@ export default {
 
   .inputDatePickerArrow {
     color: rgb(0, 0, 255);
+    cursor: pointer;
+    user-select: none;
   }
 
 </style>

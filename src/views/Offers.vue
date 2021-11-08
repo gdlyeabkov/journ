@@ -43,23 +43,23 @@
                     </div>
                 </div>
                  <div class="offerService offerServiceContainer">
-                     <div class="offerServiceItem">
+                    <div :class="{ offerServiceItem: true, offerServiceItemActive: transferPlane }" @click="transferPlane = !transferPlane">
                          <span class="offerServiceItemHeader">
                             Прямой
                          </span>
                          <span class="offerServiceItemFooter">
                             от 1 009Ք
                          </span>
-                     </div>
-                     <div class="offerServiceItem">
+                    </div>
+                    <div :class="{ offerServiceItem: true, offerServiceItemActive: !transferPlane }" @click="transferPlane = !transferPlane">
                          <span class="offerServiceItemHeader">
                             Короткая пересадка
                          </span>
                          <span class="offerServiceItemFooter">
                             от 5 310 Ք
                          </span>
-                     </div>
-                     <div :class="{ offerServiceItem: true, offerServiceItemActive: thingsPlane }" @click="thingsPlane = !thingsPlane">
+                    </div>
+                    <div :class="{ offerServiceItem: true, offerServiceItemActive: thingsPlane }" @click="thingsPlane = !thingsPlane">
                          <span class="offerServiceItemHeader">
                             C багажом
                          </span>
@@ -75,7 +75,7 @@
                             от 2 590 Ք
                          </span>
                      </div>
-                     <div class="offerServiceItem">
+                     <div :class="{ offerServiceItem: true, offerServiceItemActive: companyPlane.includes('Аэрофлот') }" @click="companyPlane.includes('Аэрофлот') ? companyPlane = '' : companyPlane = 'Аэрофлот'">
                          <span class="offerServiceItemHeader">
                             Аэрофлот
                          </span>
@@ -206,13 +206,13 @@
                             Отправление и прибытие по местному времени
                         </span>
                         <div v-for="airplaneOffer in offers.filter(offer => {
-                            return (offer.date === datePlane || offer.date === backPlane) && offer.from === fromPlane && offer.to === toPlane && ((thingsPlane && offer.isThings) || (!thingsPlane && !offer.isThings ))  && ((returnPlane && offer.isReturn) || (!returnPlane && !offer.isReturn ))
+                            return (offer.date === datePlane || offer.date === backPlane) && offer.from === fromPlane && offer.to === toPlane && ((thingsPlane && offer.isThings) || (!thingsPlane && !offer.isThings ))  && ((returnPlane && offer.isReturn) || (!returnPlane && !offer.isReturn )) && ((transferPlane && offer.isTrasfer) || (!transferPlane && !offer.isTrasfer )) && ((!transferPlane && !offer.isTrasfer) || (transferPlane && offer.isTrasfer )) && ((offer.company === companyPlane && companyPlane.length >= 1) || companyPlane.length <= 0)
                         })" :key="airplaneOffer._id" class="offer">
                             <div class="offerAside">
                                 <div class="offerAsideColumn">
                                     <div class="offerServiceFilters">
                                         <span class="offerServiceFilterCompany">
-                                            Победа
+                                            {{ airplaneOffer.company }}
                                         </span>
                                         <span class="offerServiceFilterPrice">
                                             Недорогой
@@ -743,9 +743,11 @@ export default {
             fromPlane: '',
             datePlane: '',
             backPlane: '',
+            companyPlane: '',
             planeChangeSearch: true,
             thingsPlane: false,
-            returnPlane: false
+            returnPlane: false,
+            transferPlane: false
         }
     },
     mounted(){
@@ -1029,7 +1031,7 @@ export default {
     .offerServiceFilterCompany {
         border-radius: 15px;
         background-color: rgb(225, 225, 225);
-        width: 75px;
+        width: 175px;
         display: flex;
         justify-content: center;
         align-items: center;

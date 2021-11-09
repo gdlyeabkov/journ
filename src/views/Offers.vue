@@ -167,11 +167,74 @@
                 </div>
             </div>
             <div class="offerSearchAndService" v-else-if="offersType.includes('busses')">
-                <div class="input-group inputDatePicker">
-                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_left</span>
-                    <input v-model="dateBuss" type="text" placeholder="Дата" class="form-control planeInput" />
-                    <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
-                    <span class="input-group-text material-icons inputDatePickerArrow" id="basic-addon1">arrow_right</span>
+                <div class="bussInput">
+                    <div class="dateBussWithExamples">
+                        <input v-model="fromBus" type="text" placeholder="Откуда" class="form-control inputRailway" required />
+                        <span>
+                            Например:Москва,Санкт-Петербург
+                        </span>
+                    </div>
+                    <span v-if="!isSwap" @mouseenter="isSwap = true" class="swapRoutes material-icons">
+                        arrow_right_alt
+                    </span>
+                    <span v-else @mouseleave="isSwap = false" @click="swapRoutes()" class="swapRoutes material-icons">
+                        sync
+                    </span>
+                    <div class="dateBussWithExamples">
+                        <input v-model="toBus" type="text" placeholder="Куда" class="form-control inputRailway" required />
+                        <span>
+                            Например:Санкт-Петербург,Москва
+                        </span>
+                    </div>
+                    <div class="dateBussWithExamples">
+                        <div class="input-group bussDatePicker">
+                            <input v-model="dateBuss" type="text" placeholder="Дата" class="form-control planeInput" />
+                            <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
+                        </div>
+                        <span>
+                            сегодня,завтра
+                        </span>
+                    </div>
+                    <div class="input-group bussDatePicker">
+                        <span :class="{ 'input-group-text': true, bussSpinner: true, notActiveBussSpinner: countPassengersBus <= 1 }" id="basic-addon1" @click="countPassengersBus >= 2 ? countPassengersBus-- : countPassengersBus = countPassengersBus">-</span>
+                        <input :value="`${countPassengersBus} пассажир`" type="text" class="form-control planeInput" />
+                        <span :class="{ 'input-group-text': true, bussSpinner: true }" id="basic-addon1" @click="countPassengersBus++">+</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        Найти билеты
+                    </button>
+                </div>
+                <div class="busHeader">
+                    <h4>
+                        {{ toBus }} → {{ fromBus }}, {{ `${dateBuss.split('.')[0]} ${monthsLabels[dateBuss.split('.')[1]]} ${dateBuss.split('.')[2]}` }}
+                    </h4>
+                    <select class="form-select h-75 w-25" aria-label="Default select example" v-model="currencyBus">
+                        <option value="руб.">руб.</option>
+                        <option value="грн.">грн.</option>
+                        <option value="BYN">BYN</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                    </select>
+                </div>
+                <div>
+                    <span>
+                        Поиск на другие дни
+                    </span>
+                    <button class="btn btn-light">
+                        09 нояб., вт
+                    </button>
+                    <button class="btn btn-primary">
+                        10 нояб., ср
+                    </button>
+                    <button class="btn btn-light">
+                        11 нояб., чт
+                    </button>
+                    <button class="btn btn-light">
+                        12 нояб., пт
+                    </button>
+                    <button class="btn btn-light">
+                        13 нояб., сб
+                    </button>
                 </div>
             </div>
             <div class="offerShowTimetable" v-else-if="offersType.includes('trains')">
@@ -1069,6 +1132,12 @@ export default {
                 'Belavia',
                 'Руслайн',
             ],
+            fromBus: '',
+            toBus: '',
+            dateBuss: '',
+            countPassengersBus: 1,
+            isSwap: false,
+            currencyBus: 'руб.'
         }
     },
     mounted(){
@@ -1083,6 +1152,11 @@ export default {
                 this.fromRailway = this.$route.query.from
                 this.toRailway = this.$route.query.to
                 this.dateRailway = this.$route.query.date
+            } else if(this.offersType.includes('busses')){
+                this.fromBus = this.$route.query.from
+                this.toBus = this.$route.query.to
+                this.dateBuss = this.$route.query.date
+                this.countPassengersBus = this.$route.query.meta.split(' пасс.')[0]
             } else if(this.offersType.includes('trains')){
                 this.trainFrom = this.$route.query.from
                 this.trainTo = this.$route.query.to
@@ -1092,6 +1166,11 @@ export default {
         this.refreshRoutes()
     },
     methods: {
+        swapRoutes(){
+            let tempToBus = this.toBus
+            this.toBus = this.fromBus
+            this.fromBus = tempToBus
+        },
         swapPlaneFromAndTo(){
             let tempToPlane = this.toPlane
             this.toPlane = this.fromPlane
@@ -1793,6 +1872,45 @@ export default {
         margin: 0px 5px;
     }
     
+    .bussInput {
+        display: flex;
+        align-items: center;
+    }
 
+    .bussInput > * {
+        margin: 0px 5px;
+    }
+
+    .bussDatePicker {
+        width: 250px;
+    }
+
+    .bussSpinner {
+        font-weight: bolder;
+        cursor: pointer;
+    }
+
+    .notActiveBussSpinner {
+        color: rgb(200, 200, 200);
+        cursor: default;
+    }
+
+    .swapRoutes {
+        cursor: pointer;
+    }
+
+    .dateBussWithExamples {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .currencyBus {
+        align-self: center;
+    }
+
+    .busHeader {
+        display: flex;
+        justify-content: space-between;
+    }
 
 </style>

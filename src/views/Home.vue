@@ -409,7 +409,7 @@ export default {
         }
       } else if(type.includes('busses')) {
         if(this.$refs.bussForm.reportValidity()) {
-          this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromBus, to: this.toBus, date: this.dateBus } })
+          this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromBus, to: this.toBus, date: this.dateBus, meta: this.countPassengersBus } })
         }
       } else if(type.includes('trains')) {
         if(this.$refs.trainForm.reportValidity()) {

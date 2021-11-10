@@ -170,9 +170,16 @@
                 <div class="bussInput">
                     <div class="dateBussWithExamples">
                         <input v-model="fromBus" type="text" placeholder="Откуда" class="form-control inputRailway" required />
-                        <span>
-                            Например:Москва,Санкт-Петербург
-                        </span>
+                        <div>
+                            <span>
+                                Например: 
+                            </span>
+                            <span @click="fromBus = 'Москва'" class="busLabel">Москва</span>
+                            <span>,</span>
+                            <span @click="fromBus = 'Санкт-Петербург'" class="busLabel">
+                                Санкт-Петербург
+                            </span>
+                        </div>
                     </div>
                     <span v-if="!isSwap" @mouseenter="isSwap = true" class="swapRoutes material-icons">
                         arrow_right_alt
@@ -182,18 +189,29 @@
                     </span>
                     <div class="dateBussWithExamples">
                         <input v-model="toBus" type="text" placeholder="Куда" class="form-control inputRailway" required />
-                        <span>
-                            Например:Санкт-Петербург,Москва
-                        </span>
+                        <div>
+                            <span>
+                                Например: 
+                            </span>
+                            <span @click="toBus = 'Москва'" class="busLabel">Москва</span>
+                            <span>,</span>
+                            <span @click="toBus = 'Санкт-Петербург'" class="busLabel">
+                                Санкт-Петербург
+                            </span>
+                        </div>
                     </div>
                     <div class="dateBussWithExamples">
                         <div class="input-group bussDatePicker">
                             <input v-model="dateBuss" type="text" placeholder="Дата" class="form-control planeInput" />
                             <span class="input-group-text material-icons" id="basic-addon1">grid_on</span>
                         </div>
-                        <span>
-                            сегодня,завтра
-                        </span>
+                        <div>
+                            <span @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).toLocaleDateString()" class="busLabel">сегодня</span>
+                            <span>,</span>
+                            <span @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).toLocaleDateString()" class="busLabel">
+                                завтра
+                            </span>
+                        </div>
                     </div>
                     <div class="input-group bussDatePicker">
                         <span :class="{ 'input-group-text': true, bussSpinner: true, notActiveBussSpinner: countPassengersBus <= 1 }" id="basic-addon1" @click="countPassengersBus >= 2 ? countPassengersBus-- : countPassengersBus = countPassengersBus">-</span>
@@ -206,7 +224,7 @@
                 </div>
                 <div class="busHeader">
                     <h4>
-                        {{ toBus }} → {{ fromBus }}, {{ `${dateBuss.split('.')[0]} ${monthsLabels[dateBuss.split('.')[1]]} ${dateBuss.split('.')[2]}` }}
+                        Автобус {{ fromBus }} → {{ toBus }}, {{ `${dateBuss.split('.')[0]} ${monthsLabels[dateBuss.split('.')[1]]} ${dateBuss.split('.')[2]}` }}: билеты и расписание
                     </h4>
                     <select class="form-select h-75 w-25" aria-label="Default select example" v-model="currencyBus">
                         <option value="руб.">руб.</option>
@@ -220,21 +238,24 @@
                     <span>
                         Поиск на другие дни
                     </span>
-                    <button class="btn btn-light">
-                        09 нояб., вт
+                    <button @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).toLocaleDateString()" :class="{ btn: true, 'btn-light': dateBuss !== new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).toLocaleDateString(), 'btn-primary': dateBuss === new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).toLocaleDateString() }">
+                        {{ `${new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).getDate()} ${monthsLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).getMonth()]}., ${daysLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(1).getDay()] || "..."}` }}
                     </button>
-                    <button class="btn btn-primary">
-                        10 нояб., ср
+                    <button @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).toLocaleDateString()" :class="{ btn: true, 'btn-light': dateBuss !== new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).toLocaleDateString(), 'btn-primary': dateBuss === new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).toLocaleDateString() }">
+                        {{ `${new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).getDate()} ${monthsLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).getMonth()]}., ${daysLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(2).getDay()] || "..."}` }}
                     </button>
-                    <button class="btn btn-light">
-                        11 нояб., чт
+                    <button @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).toLocaleDateString()" :class="{ btn: true, 'btn-light': dateBuss !== new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).toLocaleDateString(), 'btn-primary': dateBuss === new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).toLocaleDateString() }">
+                        {{ `${new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).getDate()} ${monthsLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).getMonth()]}., ${daysLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(3).getDay()] || "..."}` }}
                     </button>
-                    <button class="btn btn-light">
-                        12 нояб., пт
+                    <button @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).toLocaleDateString()" :class="{ btn: true, 'btn-light': dateBuss !== new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).toLocaleDateString(), 'btn-primary': dateBuss === new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).toLocaleDateString() }">
+                        {{ `${new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).getDate()} ${monthsLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).getMonth()]}., ${daysLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(4).getDay()] || "..."}` }}
                     </button>
-                    <button class="btn btn-light">
-                        13 нояб., сб
+                    <button @click="dateBuss = new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).toLocaleDateString()" :class="{ btn: true, 'btn-light': dateBuss !== new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).toLocaleDateString(), 'btn-primary': dateBuss === new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).toLocaleDateString() }">
+                        {{ `${new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).getDate()} ${monthsLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).getMonth()]}., ${daysLabels[new Date(`${new Date().toLocaleDateString().split('.')[2]}`, `${new Date().toLocaleDateString().split('.')[1]}`, `${new Date().toLocaleDateString().split('.')[0]}`).addDays(5).getDay()] || "..."}` }}
                     </button>
+                </div>
+                <div>
+
                 </div>
             </div>
             <div class="offerShowTimetable" v-else-if="offersType.includes('trains')">
@@ -1141,6 +1162,13 @@ export default {
         }
     },
     mounted(){
+        
+        Date.prototype.addDays = function(days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+
         if(this.$route.query.offerstype !== null && this.$route.query.offerstype !== undefined) {
             this.offersType = this.$route.query.offerstype
             if(this.offersType.includes('airplanes')){
@@ -1911,6 +1939,14 @@ export default {
     .busHeader {
         display: flex;
         justify-content: space-between;
+    }
+
+    .busLabel {
+        cursor: pointer;
+    }
+    
+    .busLabel:hover {
+        color: rgb(255, 0, 0);
     }
 
 </style>

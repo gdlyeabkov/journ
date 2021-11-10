@@ -81,11 +81,11 @@
           <form ref="planeForm" @submit.prevent="">
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
-                <input v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" required/>
+                <input @input="refreshCitiesList('fromPlane', 'from')" v-model="fromPlane" type="text" placeholder="Откуда" class="form-control planeInput" required/>
                 <span class="input-group-text material-icons" id="basic-addon1">flight</span>
               </div>
               <div class="input-group inputLogo">
-                <input v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('toPlane', 'to')" v-model="toPlane" type="text" placeholder="Куда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">flight</span>
               </div>
               <div class="input-group inputLogo">
@@ -150,11 +150,11 @@
           <form ref="railwayForm" @submit.prevent="">
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
-                <input v-model="fromRailway" type="text" placeholder="Откуда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('fromRailway', 'from')" v-model="fromRailway" type="text" placeholder="Откуда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">train</span>
               </div>
               <div class="input-group inputLogo">
-                <input v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput" />
+                <input @input="refreshCitiesList('toRailway', 'to')" v-model="toRailway" type="text" placeholder="Куда" class="form-control planeInput" />
                 <span class="input-group-text material-icons" id="basic-addon1">train</span>
               </div>
               <div class="input-group inputDatePicker">
@@ -187,11 +187,11 @@
           <form ref="bussForm" @submit.prevent="">
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
-                <input v-model="fromBus" type="text" placeholder="Откуда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('fromBus', 'from')" v-model="fromBus" type="text" placeholder="Откуда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">directions_bus</span>
               </div>
               <div class="input-group inputLogo">
-                <input v-model="toBus" type="text" placeholder="Куда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('toBus', 'to')" v-model="toBus" type="text" placeholder="Куда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">directions_bus</span>
               </div>
               <div class="input-group inputLogo">
@@ -256,11 +256,11 @@
           <form ref="trainForm" @submit.prevent="">
             <div class="serviceInputRow">
               <div class="input-group inputLogo">
-                <input v-model="fromTrain" type="text" placeholder="Откуда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('fromTrain', 'from')" v-model="fromTrain" type="text" placeholder="Откуда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">tram</span>
               </div>
               <div class="input-group inputLogo">
-                <input v-model="toTrain" type="text" placeholder="Куда" class="form-control planeInput" required />
+                <input @input="refreshCitiesList('toTrain', 'to')" v-model="toTrain" type="text" placeholder="Куда" class="form-control planeInput" required />
                 <span class="input-group-text material-icons" id="basic-addon1">tram</span>
               </div>
               <div class="input-group inputDatePicker">
@@ -320,6 +320,9 @@
             </form>
           </div>
       </div>
+      <div v-show="citiesDialog" class="citiesDialog" id="citiesDialogRef">
+
+      </div>
     </div>
     <Footer />
   </div>
@@ -352,16 +355,169 @@ export default {
       fromTrain: '',
       toTrain: '',
       dateTrain: new Date().toLocaleDateString(),
+      citiesDialog: false
     }
   },
   mounted(){
+    
     Date.prototype.addDays = function(days) {
       var date = new Date(this.valueOf());
       date.setDate(date.getDate() + days);
       return date;
     }
-  },
+	},
   methods: {
+    refreshCitiesList(forData, forField) {
+      this.citiesDialog = true
+      let citiesDialogRef = document.getElementById('citiesDialogRef')
+      let forInput = this.fromPlane 
+      if (forData === 'fromPlane') {
+        forInput = this.fromPlane
+      } else if (forData === 'toPlane') {
+        forInput = this.toPlane
+      } else if (forData === 'fromRailway') {
+        forInput = this.fromRailway
+      } else if (forData === 'toRailway') {
+        forInput = this.toRailway
+      } else if (forData === 'fromBus') {
+        forInput = this.fromBus
+      } else if (forData === 'toBus') {
+        forInput = this.toBus
+      } else if (forData === 'fromTrain') {
+        forInput = this.fromTrain
+      } else if (forData === 'toTrain') {
+        forInput = this.toTrain
+      }
+      if(forField === 'from') {
+        citiesDialogRef.style = `
+          background-color: rgb(255, 255, 255);
+          border-radius: 8px;
+          box-shadow: 0px 0px 10px rgb(200, 200, 200);
+          width: 200px;
+          height: 250px;
+          top: 375px;
+          left: 100px;
+          position: absolute;
+        `
+      } else if(forField === 'to') {
+        citiesDialogRef.style = `
+          box-sizing: border-box;
+          padding: 15px;
+          background-color: rgb(255, 255, 255);
+          border-radius: 8px;
+          box-shadow: 0px 0px 10px rgb(200, 200, 200);
+          width: 200px;
+          height: 250px;
+          top: 375px;
+          left: 325px;
+          position: absolute;
+        `
+      }
+      let url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address"
+      let token = "116967471baceb7e44d94009491b660ea6d0e9fe"
+      let query = forInput
+      let options = {
+          method: "POST",
+          mode: "cors",
+          headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "Authorization": "Token " + token
+          },
+          body: JSON.stringify({ query: query, count: 5 })
+      }
+      fetch(url, options)
+      .then(response => response.text())
+      .then(result => {
+        result =JSON.parse(result)
+        // console.log(result)
+        citiesDialogRef.innerHTML = ''
+        for(let item of result.suggestions){
+          // console.log(`Город: ${item.value}`)
+          let currentCityWrap = document.createElement('div')
+          let currentCity = document.createElement('span')
+          currentCity.textContent = item.value.length >= 15 ? item.value.substring(0, 15) : item.value
+          currentCityWrap.setAttribute('data-city', item.value)
+          currentCityWrap.addEventListener('click', () => {
+            if (forData === 'fromPlane') {
+              // this.fromPlane = item.value
+              this.fromPlane = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'toPlane') {
+              // this.toPlane = item.value
+              this.toPlane = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'fromRailway') {
+              // this.fromRailway = item.value
+              this.fromRailway = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'toRailway') {
+              // this.toRailway = item.value
+              this.toRailway = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'fromBus') {
+              // this.fromBus = item.value
+              this.fromBus = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'toBus') {
+              // this.toBus = item.value
+              this.toBus = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'fromTrain') {
+              // this.fromTrain = item.value
+              this.fromTrain = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            } else if (forData === 'toTrain') {
+              // this.toTrain = item.value
+              this.toTrain = currentCityWrap.getAttribute('data-city')
+              this.citiesDialog = false;
+            }
+          })
+          currentCityWrap.appendChild(currentCity)
+          currentCityWrap.style = `
+            margin: 5px 0px;
+            box-sizing: border-box;
+            padding: 15px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            color: rgb(0, 100, 255);
+            background-color: rgb(255, 255, 255);
+            cursor: pointer;
+          `
+          currentCityWrap.addEventListener('mouseenter', () => {
+            currentCityWrap.style = `
+              margin: 5px 0px;
+              box-sizing: border-box;
+              padding: 15px;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              color: rgb(255, 255, 255);
+              background-color: rgb(0, 100, 255);
+              cursor: pointer;
+            `
+          })
+          currentCityWrap.addEventListener('mouseleave', () => {
+            currentCityWrap.style = `
+              margin: 5px 0px;
+              box-sizing: border-box;
+              padding: 15px;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              color: rgb(0, 100, 255);
+              background-color: rgb(255, 255, 255);
+              cursor: pointer;
+            `
+          })
+          citiesDialogRef.appendChild(currentCityWrap)
+        }
+      }).catch(error => console.log("error", error));
+    },  
     changeTab(tab) {
       this.activeTab = tab
       if(tab.includes('Авиабилеты')) {
@@ -400,19 +556,21 @@ export default {
     },
     findTickets(type){
       if(type.includes('airplanes')) {
-        if(this.$refs.planeForm.reportValidity()) {
+        if(this.$refs.planeForm.reportValidity() && this.toPlane !== this.fromPlane) {
           this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromPlane, to: this.toPlane, date: this.datePlane, backdate: this.backPlane } })
         }
       } else if(type.includes('railways')) {
-        if(this.$refs.railwayForm.reportValidity()) {
+        if(this.$refs.railwayForm.reportValidity() && this.toRailway !== this.fromRailway) {
           this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromRailway, to: this.toRailway, date: this.dateRailway } })
         }
       } else if(type.includes('busses')) {
-        if(this.$refs.bussForm.reportValidity()) {
+        if(this.$refs.bussForm.reportValidity() && this.toBus !== this.fromBus) {
           this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromBus, to: this.toBus, date: this.dateBus, meta: this.countPassengersBus } })
+        } else {
+          alert('Неправильно указаны данные')
         }
       } else if(type.includes('trains')) {
-        if(this.$refs.trainForm.reportValidity()) {
+        if(this.$refs.trainForm.reportValidity() && this.toTrain !== this.fromTrain) {
           this.$router.push({ name: 'Offers', query: { offerstype: type, from: this.fromTrain, to: this.toTrain, date: this.dateTrain } })
         }
       }
@@ -526,6 +684,35 @@ export default {
     color: rgb(0, 0, 255);
     cursor: pointer;
     user-select: none;
+  }
+
+  .citiesDialog {
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgb(200, 200, 200);
+    width: 200px;
+    height: 250px;
+    top: 375px;
+    left: 325px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .citiesDialog > div {
+    box-sizing: border-box;
+    padding: 15px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0, 100, 255);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .citiesDialog > div:hover {
+    background-color: rgb(0, 100, 255);
+    color: rgb(255, 255, 255);
   }
 
 </style>
